@@ -22,9 +22,9 @@ def get_gas_prediction():
         return "Invalid date"
 
 
-@app.route('/incomes')
-def get_incomes():
-    return jsonify(incomes)
+@app.route('/')
+def home():
+    return jsonify("home")
 
 
 
