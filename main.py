@@ -18,28 +18,12 @@ def get_gas_prediction():
     else: 
         return "Invalid date"
 
-@app.route("/predict_for_dates")
-def get_gas_prediction():
-    if request.args['start'] and request.args['end']:
-        try: 
-            df_price = get_gas_price_for_date(request.args['date'])
-            return convert_df_to_resp(df_price)
-        except:
-            return "Error"
-    else: 
-        return "Invalid date"
-
 
 @app.route('/')
 def home():
     return jsonify("home")
 
 
-def get_gas_for_dates(start,end):
-    ''' get the average, high, low, and buy date for a start and end date'''
-    start_date = datetime.strptime(start,"%m/%d/%Y")
-    end_date = datetime.strptime(end,"%m/%d/%Y")
-    
 def get_gas_price_for_date(dte):
     ''' given a UTC date return the predicted gas price for that date'''
     gwei = pd.read_csv("AvgGasPrice.csv")
