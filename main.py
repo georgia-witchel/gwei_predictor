@@ -6,13 +6,21 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 app = Flask(__name__)
 
-incomes = [
-    { 'description': 'salary', 'amount': 5000 }
-]
 
 @app.route("/predict_for_date")
 def get_gas_prediction():
     if request.args['date']:
+        try: 
+            df_price = get_gas_price_for_date(request.args['date'])
+            return convert_df_to_resp(df_price)
+        except:
+            return "Error"
+    else: 
+        return "Invalid date"
+
+@app.route("/predict_for_dates")
+def get_gas_prediction():
+    if request.args['start'] and request.args['end']:
         try: 
             df_price = get_gas_price_for_date(request.args['date'])
             return convert_df_to_resp(df_price)
@@ -27,7 +35,11 @@ def home():
     return jsonify("home")
 
 
-
+def get_gas_for_dates(start,end):
+    ''' get the average, high, low, and buy date for a start and end date'''
+    start_date = datetime.strptime(start,"%m/%d/%Y")
+    end_date = datetime.strptime(end,"%m/%d/%Y")
+    
 def get_gas_price_for_date(dte):
     ''' given a UTC date return the predicted gas price for that date'''
     gwei = pd.read_csv("AvgGasPrice.csv")
@@ -60,4 +72,10 @@ def convert_df_to_resp(df):
         "Expected Value":j['Prediction'][key]
     }
 
-print(convert_df_to_resp(get_gas_price_for_date('3/10/2023')))
+# example: print the dataframe predicting the gas price for 3/10/2023
+gas_price = get_gas_price_for_date('3/10/2023')
+print(gas_price)
+
+#example: get the JSON formatted gas prediction for 3/10/2023
+formatted_gas_price = convert_df_to_resp(gas_price)
+print(formatted_gas_price)
